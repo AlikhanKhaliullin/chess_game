@@ -34,6 +34,6 @@ while True:
 
         
         if event.type == pygame.QUIT: sys.exit()
-    screen.fill((0,0,255))
+    screen.fill((234,205,174))
     g1.draw_figures(screen)
     pygame.display.flip()
