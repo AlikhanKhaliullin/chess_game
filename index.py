@@ -8,7 +8,7 @@ from pygame.locals import (
 
 g1= Game()
 g1.create_figures()
-click_check=False
+
 #g1.member_move(0,1,0,2)
 size= {
     "height":800,
@@ -24,19 +24,16 @@ while True:
     mouse_pos = pygame.mouse.get_pos()
 
     for event in pygame.event.get():
-        if click_check == False:
-            if event.type == MOUSEBUTTONDOWN:
-                mouse_dict={
-                    "x": mouse_pos[0]//100,
-                    "y": mouse_pos[1]//100,
-                }
-            g1.member_chose(mouse_dict)
-        if click_check == True:
-            if event.type == MOUSEBUTTONDOWN:
-                mouse_dict={
-                    "x": mouse_pos[0]//100,
-                    "y": mouse_pos[1]//100,
-                }
-            
+       
+        if event.type == MOUSEBUTTONDOWN:
+            mouse_dict={
+                "x": mouse_pos[0]//100,
+                "y": mouse_pos[1]//100,
+            }
+            click_check = g1.member_chose(mouse_dict)
+
+        
         if event.type == pygame.QUIT: sys.exit()
-    screen.fill((255,255,255))
+    screen.fill((0,0,255))
+    g1.draw_figures(screen)
+    pygame.display.flip()

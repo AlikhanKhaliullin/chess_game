@@ -6,6 +6,7 @@
 # ладья l 
 # конь h
 # король k 
+import pygame
 class Game:
     def __init__(self):
         self.table= [
@@ -20,7 +21,9 @@ class Game:
             ["*","*","*","*","*","*","*","*"],#7
         ]
         self.figure_chosen=None
-
+        self.click_check=False
+        self.white_color=255,255,255
+        self.black_color=0,0,0
     def draw_table(self):
         pass
 
@@ -32,31 +35,75 @@ class Game:
             self.table[6][i]="wp"
         
     def member_chose(self,mouse_pos):
-        
-        if self.table[mouse_pos["y"]][mouse_pos["x"]] =="*":
-            pass
-        print(self.table[mouse_pos["y"]][mouse_pos["x"]] )
-        self.figure_chosen = mouse_pos
+        if self.click_check is False:
+            self.check_figure(mouse_pos)
+            print(self.click_check)
+        elif self.click_check is True:   
+            self.figure_move(mouse_pos)
+            print(self.click_check)
 
-    def member_move(self,x1,y1):
-        
-        if self.table[y1][x1] =="*":
-            pass
+
+    def check_figure(self,mouse_pos):
+        if self.table[mouse_pos["y"]][mouse_pos["x"]] =="*":
+            self.click_check = False
+
+        else:
+            self.figure_chosen = mouse_pos
+            self.click_check = True
+
+    def write_figure_on_desk(self,text,x1,y1,y2,x2):
+        self.table[y1][x1]="*"
+        self.table[y2][x2]=f"{text}"
+
+    def figure_move(self,mouse_pos):
+        print("OK")
+
+        self.click_check=False
+        y1 = self.figure_chosen['y']
+        x1 = self.figure_chosen['x']
+        y2 = mouse_pos['y']
+        x2 = mouse_pos['x']
+        print(x1)
 
         if "bp" in self.table[y1][x1] :
-            if x2 == x1 and  y2 <= y1+2:
-                print("yes")
-                self.table[y1][x1]="*"
-                self.table[y2][x2]="bp"
-    
+
+            if (x2 == x1 and  y1 < y2 <= y1+1 
+                    and self.table[y2][x2] == '*' and 1 == y1):
+                self.write_figure_on_desk("bp",x1,y1,y2,x2)
+
+            if (x2 == x1 and  y1 < y2 <= y1+1 
+                    and self.table[y2][x2] == '*'):
+                self.write_figure_on_desk("bp",x1,y1,y2,x2)
+
+            elif ((x1-1 == x2 or x2 == x1+1) and y1 < y2 <= y1+1 and 
+                    "bp" != self.table[y2][x2]  != "*"):
+                self.write_figure_on_desk("bp",x1,y1,y2,x2)
+
         if "wp" in self.table[y1][x1] :
-            if x2 == x1 and  y2 >= y1-2:
-                print("yes")
-                self.table[y1][x1]="*"
-                self.table[y2][x2]="wp"
+            if x2 == x1 and  y1>y2 >= y1-2:
+                self.write_figure_on_desk("bp",x1,y1,y2,x2)
+                
         print(*self.table)
         
+    def draw_figures(self,screen):
+        white=0,0,255
         
+        for i in range(0,8):
+            for g in range(0,8):
+                if self.table[i][g] != "*":
+                    pos=((g*100)+100 -50 ,i*100+100-50)
+                    
+                    if "w" in self.table[i][g]:
+                        color=self.white_color
+                    else:
+                        color=self.black_color
+
+                    pygame.draw.circle(
+                        surface = screen,
+                        color = color,
+                        center  = pos,
+                        radius = 50
+                    )
 
 a=Game()
 a.create_figures()
