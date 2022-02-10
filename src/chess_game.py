@@ -25,6 +25,8 @@ class Game:
         self.white_color=255,255,255
         self.black_color=0,0,0
         self.side=True
+        self.load_bp_img =  self.resize_figure(pygame.image.load("chess_game/img/bp.png"))
+        self.load_wp_img = self.resize_figure(pygame.image.load("chess_game/img/wp.png"))
     def draw_table(self):
         pass
 
@@ -83,6 +85,7 @@ class Game:
                 elif ((x1-1 == x2 or x2 == x1+1) and y1 < y2 <= y1+1 and 
                         "bp" != self.table[y2][x2]  != "*"):
                     self.write_figure_on_desk("bp",x1,y1,y2,x2)
+
         if self.side == True:
             if "wp" in self.table[y1][x1] :
 
@@ -98,10 +101,8 @@ class Game:
                         "wp" != self.table[y2][x2]  != "*"):
                     self.write_figure_on_desk("wp",x1,y1,y2,x2)
                 
-                
-                
-                
-        print(*self.table)
+    def resize_figure(self,figure):
+        return pygame.transform.scale(figure, (100, 100))
         
     def draw_figures(self,screen):
         white=0,0,255
@@ -130,19 +131,22 @@ class Game:
         for i in range(0,8):
             for g in range(0,8):
                 if self.table[i][g] != "*":
-                    pos=((g*100)+100 -50 ,i*100+100-50)
+                    pos=((g*100)+100 -100 ,i*100+100-100)
                     
                     if "w" in self.table[i][g]:
-                        color=self.white_color
-                    else:
-                        color=self.black_color
+                        side= self.load_wp_img
 
-                    pygame.draw.circle(
-                        surface = screen,
-                        color = color,
-                        center  = pos,
-                        radius = 50
-                    )
+                    else:
+                        side= self.load_bp_img
+
+                    
+                    screen.blit(side, self.load_bp_img.get_rect(topleft=pos))
+                    #pygame.draw.circle(
+                    #    surface = screen,
+                    #    color = color,
+                    #    center  = pos,
+                    #    radius = 50
+                    #)
         
 
 a=Game()
