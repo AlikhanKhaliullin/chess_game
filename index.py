@@ -7,7 +7,7 @@ from pygame.locals import (
 )
 
 g1= Game()
-g1.create_figures()
+g1.write_figures()
 
 #g1.member_move(0,1,0,2)
 size= {

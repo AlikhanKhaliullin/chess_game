@@ -11,14 +11,14 @@ class Game:
     def __init__(self):
         self.table= [
             # 0   1   2   3   4   5   6   7 
-            ["*","*","*","*","*","*","*","*"],#0
+            ["bl","*","*","*","*","*","*","*"],#0
             ["*","*","*","*","*","*","*","*"],#1
             ["*","*","*","*","*","*","*","*"],#2
             ["*","*","*","*","*","*","*","*"],#3
             ["*","*","*","*","*","*","*","*"],#4
             ["*","*","*","*","*","*","*","*"],#5
             ["*","*","*","*","*","*","*","*"],#6
-            ["*","*","*","*","*","*","*","*"],#7
+            ["wl","*","*","*","*","*","*","*"],#7
         ]
         self.figure_chosen=None
         self.click_check=False
@@ -27,23 +27,8 @@ class Game:
         self.side=True
         self.load_bp_img =  self.resize_figure(pygame.image.load("chess_game/img/bp.png"))
         self.load_wp_img = self.resize_figure(pygame.image.load("chess_game/img/wp.png"))
-    def draw_table(self):
-        pass
-
-    def create_figures(self):
-        for i in range(0,8):
-            self.table[1][i]="bp"
-
-        for i in range(0,8):
-            self.table[6][i]="wp"
-        
-    def member_chose(self,mouse_pos):
-        if self.click_check is False:
-            self.check_figure(mouse_pos)
-            print(self.click_check)
-        elif self.click_check is True:   
-            self.figure_move(mouse_pos)
-            print(self.click_check)
+        self.load_wl_img = self.resize_figure(pygame.image.load("chess_game/img/wp.png"))
+        self.load_bl_img =self.resize_figure(pygame.image.load("chess_game/img/bp.png"))
 
 
     def check_figure(self,mouse_pos):
@@ -54,6 +39,32 @@ class Game:
             self.figure_chosen = mouse_pos
             self.click_check = True
 
+    
+       
+    def write_figures(self):
+        for i in range(0,8):
+            self.table[1][i]="bp"
+
+        for i in range(0,8):
+            self.table[6][i]="wp"
+
+
+
+    def member_chose(self,mouse_pos):
+        if self.click_check is False:
+            self.check_figure(mouse_pos)
+            print(self.click_check)
+            
+        elif self.click_check is True:   
+            self.figure_move(mouse_pos)
+            print(self.click_check)
+
+    def figure_move(self,mouse_pos):
+            self.click_check=False
+            self.p_rules(mouse_pos)
+            self.l_rules(mouse_pos)
+
+#---------------------RulesPart---------------------------------------
     def write_figure_on_desk(self,text,x1,y1,y2,x2):
         self.table[y1][x1]="*"
         self.table[y2][x2]=f"{text}"
@@ -62,18 +73,14 @@ class Game:
         else:
             self.side = False
 
-    def figure_move(self,mouse_pos):
-        print("OK")
-
-        self.click_check=False
+    def p_rules(self,mouse_pos):
         y1 = self.figure_chosen['y']
         x1 = self.figure_chosen['x']
         y2 = mouse_pos['y']
         x2 = mouse_pos['x']
-        print(x1)
+
         if self.side == False:
             if "bp" in self.table[y1][x1] :
-
                 if (x2 == x1 and  y1 < y2 <= y1+2 
                         and self.table[y2][x2] == '*' and 1 == y1):
                     self.write_figure_on_desk("bp",x1,y1,y2,x2)
@@ -85,10 +92,8 @@ class Game:
                 elif ((x1-1 == x2 or x2 == x1+1) and y1 < y2 <= y1+1 and 
                         "bp" != self.table[y2][x2]  != "*"):
                     self.write_figure_on_desk("bp",x1,y1,y2,x2)
-
         if self.side == True:
             if "wp" in self.table[y1][x1] :
-
                 if (x2 == x1 and  y1 > y2 >= y1-2 
                         and self.table[y2][x2] == '*' and 6 == y1):
                     self.write_figure_on_desk("wp",x1,y1,y2,x2)
@@ -100,11 +105,81 @@ class Game:
                 elif ((x1-1 == x2 or x2 == x1+1) and y1 > y2 >= y1-1 and 
                         "wp" != self.table[y2][x2]  != "*"):
                     self.write_figure_on_desk("wp",x1,y1,y2,x2)
-                
+
+    def l_rules(self,mouse_pos):
+        if self.side == False:
+            self.rule_l_for_both_side(mouse_pos,"bl")
+
+        if self.side == True:
+            self.rule_l_for_both_side(mouse_pos,"wl")
+                    
+    def rule_l_for_both_side(self,mouse_pos,text):
+        y1 = self.figure_chosen['y']
+        x1 = self.figure_chosen['x']
+        y2 = mouse_pos['y']
+        x2 = mouse_pos['x']
+        if text in self.table[y1][x1] :
+                if x1==x2 or y1==y2:
+                    print(y2,y1)
+                    if y2>y1:
+                        print("OK")
+                        for i in range(y1+1,y2+1):
+                            print(y1,y2,i)
+                            if self.table[i][x1] != "*" and i==y2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                                break
+                            if self.table[i][x1] != "*":
+                                break
+                            if i == y2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                             
+
+                    elif x2>x1:
+                        for i in range(x1+1,x2+1):
+                            print(x1,x2,i)
+                            if self.table[y1][i] != "*" and i==x2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                                break
+                            if self.table[y1][i] != "*":
+                                break
+                            if i == x2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+
+                    if y1>y2:
+                        g = y1
+                        while g > 0:
+                            g-=1
+                            if self.table[g][x1] != "*" and g==y2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                                break
+
+                            if self.table[g][x1] != "*":
+                                break
+
+                            if g == y2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                             
+                    elif x1>x2:
+                        g = x1
+                        while g > 0:
+                            g-=1
+                            if self.table[y1][g] != "*" and g==x2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+                                break
+                            if self.table[y1][g] != "*":
+                                break
+                            if g == x2:
+                                self.write_figure_on_desk(text,x1,y1,y2,x2)
+
+#---------------------VisiblePart----------------------------------------
+    def draw_figures(self,screen):
+        self.draw_desk(screen)
+        self.drawfigures_on_desk(screen)
+
     def resize_figure(self,figure):
         return pygame.transform.scale(figure, (100, 100))
-        
-    def draw_figures(self,screen):
+
+    def draw_desk(self,screen):
         white=0,0,255
         color_switch=False
         for i in range(0,8):
@@ -115,7 +190,6 @@ class Game:
                 else:
                     color=(189,109,60)
                     color_switch=False
-
                     pygame.draw.rect(
                         surface=screen,
                         color = color,
@@ -125,29 +199,22 @@ class Game:
                     color_switch=True
                 elif g==7 and color_switch == True:
                     color_switch=False
-                    
 
-
+    def drawfigures_on_desk(self,screen):
         for i in range(0,8):
             for g in range(0,8):
                 if self.table[i][g] != "*":
                     pos=((g*100)+100 -100 ,i*100+100-100)
-                    
-                    if "w" in self.table[i][g]:
+
+                    if "wp" in self.table[i][g]:
+                        side= self.load_wp_img
+                    if "bp" in self.table[i][g]:
+                        side= self.load_bp_img
+                    if "bl" in self.table[i][g]:
+                        side= self.load_bp_img
+                    if "wl" in self.table[i][g]:
                         side= self.load_wp_img
 
-                    else:
-                        side= self.load_bp_img
-
-                    
                     screen.blit(side, self.load_bp_img.get_rect(topleft=pos))
-                    #pygame.draw.circle(
-                    #    surface = screen,
-                    #    color = color,
-                    #    center  = pos,
-                    #    radius = 50
-                    #)
-        
-
 a=Game()
-a.create_figures()
+a.write_figures()
