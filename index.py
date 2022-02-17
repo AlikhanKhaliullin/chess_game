@@ -13,7 +13,7 @@ g1.write_figures()
 size= {
     "height":800,
     "width":800, 
-}
+} 
 
 screen = pygame.display.set_mode(
         [size["width"], size["height"]])
