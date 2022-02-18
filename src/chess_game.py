@@ -11,14 +11,14 @@ class Game:
     def __init__(self):
         self.table= [
             # 0   1   2   3   4   5   6   7 
-            ["bl","bh","bs","*","*","bs","bh","*"],#0
+            ["bl","bh","bs","bq","bk","bs","bh","bl"],#0
             ["*","*","*","*","*","*","*","*"],#1
             ["*","*","*","*","*","*","*","*"],#2
-            ["*","*","*","*","*","*","bs","*"],#3
-            ["*","*","*","*","*","*","*","*"],#4
+            ["*","*","*","*","*","*","*","*"],#3
+            ["*","*","*","*","wk","*","*","*"],#4
             ["*","*","*","*","*","*","*","*"],#5
             ["*","*","*","*","*","*","*","*"],#6
-            ["wl","wh","ws","*","*","ws","wh","wl"],#7
+            ["wl","wh","ws","wq","wk","ws","wh","wl"],#7
         ]
         self.figure_chosen = None
         self.click_check = False
@@ -74,6 +74,12 @@ class Game:
 
             if "s" in self.table[self.figure_chosen['y']][self.figure_chosen['x']]:
                 self.s_rules(mouse_pos, "s")
+            
+            if "q" in self.table[self.figure_chosen['y']][self.figure_chosen['x']]:
+                self.q_rules(mouse_pos, "q")
+
+            if "k" in self.table[self.figure_chosen['y']][self.figure_chosen['x']]:
+                self.k_rules(mouse_pos, "k")
 
 #---------------------RulesPart---------------------------------------
     def write_figure_on_desk(self, text, x1, y1, y2, x2):
@@ -133,6 +139,34 @@ class Game:
             if f"w{text}" in self.table[y1][x1] :
                 self.rule_l_for_both_side(mouse_pos, f"w{text}")
             
+    def q_rules(self, mouse_pos, text):
+        y1, x1, y2, x2= self.pos_fig(mouse_pos)
+        
+        if self.side == False:
+            if f"b{text}" in self.table[y1][x1] :
+                self.rule_l_for_both_side(mouse_pos, f"b{text}")
+                self.rule_s_for_both_side(mouse_pos, f"b{text}")
+
+
+        elif self.side == True:
+            if f"w{text}" in self.table[y1][x1] :
+                self.rule_l_for_both_side(mouse_pos, f"w{text}")
+                self.rule_s_for_both_side(mouse_pos, f"w{text}")
+
+    def k_rules(self, mouse_pos, text):
+        y1, x1, y2, x2= self.pos_fig(mouse_pos)
+
+        if self.side == True:
+            print("OK")
+            if "wk" in self.table[y1][x1] and "w" not in  self.table[y2][x2]:
+                if (x1 <= x2 <= x1 + 1 or x1 >= x2 >= x2 - 1) and (y1 <= y2 <= y1 + 1 or y1 >=  y2 >= y1 -1 ):
+                    self.write_figure_on_desk(f"w{text}", x1, y1, y2, x2)
+            
+        if self.side == False:
+            if "bk" in self.table[y1][x1] and "b" not in  self.table[y2][x2]:
+                if (x1 <= x2 <= x1 + 1 or x1 >= x2 >= x2 - 1) and (y1 <= y2 <= y1 + 1 or y1 >=  y2 >= y1 -1 ):
+                    self.write_figure_on_desk(f"b{text}", x1, y1, y2, x2)
+
 
     def rule_l_for_both_side(self,mouse_pos,text):
         y1, x1, y2, x2= self.pos_fig(mouse_pos)
@@ -289,7 +323,6 @@ class Game:
     def draw_help_cyrcles(self,screen):
         x = self.figure_chosen["x"]
         y = self.figure_chosen["y"]
-        print(self.table[y][x])
         if "p" in self.table[y][x]:
             self.draw_p(screen,x,y)
 
@@ -301,9 +334,91 @@ class Game:
         
         if "h" in self.table[y][x]:    
             self.draw_h(screen, x, y)
+
+        if "q" in self.table[y][x]:    
+            self.draw_l(screen, x, y)
+            self.draw_s(screen, x, y)
+        if "k" in self.table[y][x]: 
+            self.draw_k(screen, x, y)
     def draw_cyrcles(self, screen, color, pos):
         pygame.draw.circle(screen, color, pos, 10)
 #----------------------------------------------------------------
+    def draw_k(self, screen, x, y):
+        if "b" in self.table[y][x]:
+            for i in range(y+1,y+2):
+                pos = (x*100+50, i*100+50)
+                if self.table[i][x] != "*":
+                    if "w" in self.table[i][x]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+            
+            for i in range(y-1,y-2,-1):
+                pos = (x*100+50, i*100+50)
+                if self.table[i][x] != "*":
+                    if "w" in  self.table[i][x]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+
+            for i in range(x+1,x+2):
+                pos = (i*100+50, y*100+50)
+                if self.table[y][i] != "*":
+                    if "w" in self.table[y][i]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+
+            for i in range(x-1,x-2,-1):
+                pos = (i*100+50, y*100+50)
+                if self.table[y][i] != "*":
+                    if "w" in self.table[y][i]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+            
+        if "w" in self.table[y][x]:
+            for i in range(y+1,y+2):
+                pos = (x*100+50, i*100+50)
+                if self.table[i][x] != "*":
+                    if "b" in self.table[i][x]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+            
+            for i in range(y-1,y-2,-1):
+                pos = (x*100+50, i*100+50)
+                if self.table[i][x] != "*":
+                    if "b" in  self.table[i][x]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+
+            for i in range(x+1,x+2):
+                pos = (i*100+50, y*100+50)
+                if self.table[y][i] != "*":
+                    if "b" in self.table[y][i]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+
+            for i in range(x-1,x-2,-1):
+                pos = (i*100+50, y*100+50)
+                if self.table[y][i] != "*":
+                    if "b" in self.table[y][i]:
+                        self.draw_cyrcles(screen, (255,0,0), pos)
+                    break
+                
+                self.draw_cyrcles(screen, (255,255,0), pos)
+            
+
     def draw_p(self,screen,x,y):
         if "w" in self.table[y][x]:
             if y == 6 and self.table[y-1][x] == "*":
@@ -691,6 +806,128 @@ class Game:
                     self.draw_cyrcles(screen, (255,0,0), pos)
             except:
                 pass
+        
+        if "w" in self.table[y][x]:
+            
+            try:
+                if self.table[y+2][x-1]  == "*":
+                    pos = ((x-1)*100+50, (y+2)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+
+            try:
+                if self.table[y+2][x+1]  == "*":
+                    pos = ((x+1)*100+50, (y+2)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+
+            try:
+                if self.table[y-2][x-1]  == "*":
+                    pos = ((x-1)*100+50, (y-2)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+
+            try:
+                if self.table[y-2][x+1]  == "*":
+                    pos = ((x+1)*100+50, (y-2)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+            
+            try:
+                if self.table[y-1][x+2]  == "*":
+                    pos = ((x+2)*100+50, (y-1)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+            
+            try:
+                if self.table[y+1][x+2]  == "*":
+                    pos = ((x+2)*100+50, (y+1)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+            
+            try:
+                if self.table[y-1][x-2]  == "*":
+                    pos = ((x-2)*100+50, (y-1)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+            
+            try:
+                if self.table[y+1][x-2]  == "*":
+                    pos = ((x-2)*100+50, (y+1)*100+50)
+                    self.draw_cyrcles(screen, (255,255,0), pos)
+            except:
+                pass
+
+            try:
+                if "b" in self.table[y+2][x-1]:
+                    pos = ((x-1)*100+50, (y+2)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+
+
+            try:
+                if "b" in self.table[y+2][x+1]:
+                    pos = ((x+1)*100+50, (y+2)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+
+
+            try:
+                if "b" in self.table[y-2][x-1]:
+                    pos = ((x-1)*100+50, (y-2)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+
+
+            try:
+                if "b" in self.table[y-2][x+1]:
+                    pos = ((x+1)*100+50, (y-2)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+ 
+            
+            try:
+                if "b" in self.table[y-1][x+2]:
+                    pos = ((x+2)*100+50, (y-1)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+ 
+            
+            try:
+                if "b" in self.table[y+1][x+2]:
+                    pos = ((x+2)*100+50, (y+1)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+ 
+            
+            try:
+                if "b" in self.table[y-1][x-2]:
+                    pos = ((x-2)*100+50, (y-1)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+ 
+            
+            try:
+                if "b" in self.table[y+1][x-2]:
+                    pos = ((x-2)*100+50, (y+1)*100+50)
+                    self.draw_cyrcles(screen, (255,0,0), pos)
+            except:
+                pass
+
 
 
 #----------------------------------------------------------------
